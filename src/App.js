@@ -4,6 +4,8 @@ import Signup from './components/Signup';
 import Signin from './components/Signin';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import User from './components/User';
+import Navbar from './components/Navbar';
+import AddTask from './components/AddTask';
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
   <Route path='/' element={<Signin/>}/>
   <Route path='/Signup' element={<Signup/>}/>
   <Route path='/User' element={<User/>}/>
+  <Route path='/NavBar' element={<Navbar/>}/>
+  <Route path='/AddTask' element={<AddTask/>}/>
 </Routes>
 </BrowserRouter>
     </div>
