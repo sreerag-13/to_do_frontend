@@ -11,7 +11,7 @@ const AddTask = () => {
   });
   const [titles, setTitles] = useState([]);
 
-  // Fetch titles on component mount
+
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -32,17 +32,15 @@ const AddTask = () => {
     });
   }, []);
 
-  // Handle title input
   const titleInputHandler = (event) => {
     setTitleInput({ title: event.target.value });
   };
 
-  // Handle task input
+
   const taskInputHandler = (event) => {
     setTaskInput({ ...taskInput, [event.target.name]: event.target.value });
   };
 
-  // Add new title
   const addTitle = () => {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -69,7 +67,6 @@ const AddTask = () => {
     });
   };
 
-  // Add new task
   const addTask = () => {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -80,7 +77,7 @@ const AddTask = () => {
       alert('Please fill all task fields');
       return;
     }
-    console.log('Adding task:', taskInput); // Debug
+    console.log('Adding task:', taskInput); 
     axios.post('http://localhost:3030/api/addtask', taskInput, {
       headers: { token }
     }).then(response => {
@@ -103,7 +100,7 @@ const AddTask = () => {
         <div className="row">
           <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
             <div className="row g-3">
-              {/* Title Form */}
+      
               <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                 <label htmlFor="title" className="form-label">Add Title</label>
                 <input
@@ -119,7 +116,7 @@ const AddTask = () => {
               <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                 <button onClick={addTitle} className="btn btn-success">Add Title</button>
               </div>
-              {/* Task Form */}
+        
               <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                 <label htmlFor="taskId" className="form-label">Select Title</label>
                 <select
@@ -155,7 +152,7 @@ const AddTask = () => {
                   value={taskInput.deadline}
                   className="form-control"
                   onChange={taskInputHandler}
-                  min={new Date().toISOString().split('T')[0]} // Prevent past dates
+                  min={new Date().toISOString().split('T')[0]}
                 />
               </div>
               <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
