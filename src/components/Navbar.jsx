@@ -11,7 +11,7 @@ const Navbar = () => {
                     <a class="nav-link" href="/AddTask">Add Task</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
+                    <a class="nav-link" href="/ViewTask">View Task</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" aria-disabled="true">Disabled</a>

@@ -10,33 +10,40 @@ const AddTask = () => {
     deadline: ''
   });
   const [titles, setTitles] = useState([]);
-
-
-  useEffect(() => {
+  const fetchTitles = () => {
     const token = sessionStorage.getItem('token');
+    const userId = sessionStorage.getItem('UserId');
     if (!token) {
       alert('Please log in first');
       return;
     }
-    axios.get('http://localhost:3030/api/titles', {
+    console.log('Fetching titles for userId:', userId);
+    axios.get('http://localhost:3030/titles', {
       headers: { token }
     }).then(response => {
-      if (response.data.status === 'success') {
+      console.log('Titles response:', response.data);
+      if (response.data.status === 'success' && Array.isArray(response.data.titles)) {
         setTitles(response.data.titles);
+        if (response.data.titles.length === 0) {
+          console.log('No titles found for userId:', userId);
+        }
       } else {
-        alert(response.data.message);
+        console.log('Invalid titles response:', response.data);
+        alert('No titles available');
+        setTitles([]);
       }
     }).catch(error => {
-      console.log(error);
-      alert('Failed to fetch titles');
+      console.log('Error fetching titles:', error.message, error.response?.status);
+      alert('Cannot load titles. Please try again.');
+      setTitles([]);
     });
-  }, []);
-
-  const titleInputHandler = (event) => {
-    setTitleInput({ title: event.target.value });
   };
-
-
+  useEffect(() => {
+    fetchTitles();
+  }, []);
+  const titleInputHandler = (event) => {
+    setTitleInput({ title: event.target.value.trim() });
+  };
   const taskInputHandler = (event) => {
     setTaskInput({ ...taskInput, [event.target.name]: event.target.value });
   };
@@ -48,25 +55,26 @@ const AddTask = () => {
       return;
     }
     if (!titleInput.title) {
-      alert('Please enter a title');
+      alert('Enter a title');
       return;
     }
-    axios.post('http://localhost:3030/api/addtitle', titleInput, {
+    console.log('Adding title:', titleInput);
+    axios.post('http://localhost:3030/addtitle', titleInput, {
       headers: { token }
     }).then(response => {
+      console.log('Add title response:', response.data);
       if (response.data.status === 'success') {
-        alert('Title added successfully');
-        setTitles([...titles, { id: response.data.title.id, title: response.data.title.title }]);
+        alert('Title added');
+        fetchTitles(); 
         setTitleInput({ title: '' });
       } else {
-        alert(response.data.message);
+        alert(response.data.message || 'Cannot add title');
       }
     }).catch(error => {
-      console.log(error);
-      alert('Failed to add title');
+      console.log('Error adding title:', error.message);
+      alert('Error adding title');
     });
   };
-
   const addTask = () => {
     const token = sessionStorage.getItem('token');
     if (!token) {
@@ -74,22 +82,24 @@ const AddTask = () => {
       return;
     }
     if (!taskInput.taskId || !taskInput.description || !taskInput.deadline) {
-      alert('Please fill all task fields');
+      alert('Fill all task fields');
       return;
     }
-    console.log('Adding task:', taskInput); 
-    axios.post('http://localhost:3030/api/addtask', taskInput, {
+    console.log('Adding task:', taskInput);
+    axios.post('http://localhost:3030/addtask', taskInput, {
       headers: { token }
     }).then(response => {
+      console.log('Add task response:', response.data);
       if (response.data.status === 'success') {
-        alert('Task added successfully');
+        alert('Task added');
         setTaskInput({ taskId: '', description: '', deadline: '' });
+        fetchTitles();
       } else {
-        alert(response.data.message);
+        alert(response.data.message || 'Cannot add task');
       }
     }).catch(error => {
-      console.log(error);
-      alert('Failed to add task');
+      console.log('Error adding task:', error.message);
+      alert('Error adding task');
     });
   };
 
@@ -100,9 +110,8 @@ const AddTask = () => {
         <div className="row">
           <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
             <div className="row g-3">
-      
               <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                <label htmlFor="title" className="form-label">Add Title</label>
+                <label htmlFor="title" className="form-label">Add New Title</label>
                 <input
                   type="text"
                   id="title"
@@ -116,9 +125,8 @@ const AddTask = () => {
               <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
                 <button onClick={addTitle} className="btn btn-success">Add Title</button>
               </div>
-        
               <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
-                <label htmlFor="taskId" className="form-label">Select Title</label>
+                <label htmlFor="taskId" className="form-label">Select Existing Title</label>
                 <select
                   id="taskId"
                   name="taskId"
@@ -140,7 +148,7 @@ const AddTask = () => {
                   value={taskInput.description}
                   className="form-control"
                   onChange={taskInputHandler}
-                  placeholder="Enter task description (e.g., Buy milk)"
+                  placeholder="Enter task (e.g., Buy milk)"
                 />
               </div>
               <div className="col col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-12">
